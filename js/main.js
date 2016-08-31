@@ -1,38 +1,57 @@
-function onReady(){
-      console.log("page loaded");
-      
-     setInterval(updateClock, 1000);
-     updateClock();
+function onReady() {
+	console.log("page loaded");
+
+	var clock = new Clock('clock');
+	var clock2 = new Clock('clock2', -300, 'ETC');
+	var clock2 = new Clock('clock3', 300, 'X');
 
 }
 
-function updateClock(){
-        
-   var date = new Date();
-      
-      //console.log(date.getHours());
-      //console.log(date.getMinutes());
-      //console.log(date.getSeconds());
-      
-      //var hours = document.getElementById('hr');
-      //var minutes = document.getElementById('mn');
-      //var seconds = document.getElementById('sc');
-      //
-      //hours.innerHTML = date.getHours();
-      //minutes.innerHTML = date.getMinutes();
-      //seconds.innerHTML = date.getSeconds();
-      
-      var clock = document.getElementById('clock');
-      
-      clock.innerHTML = formatDigits(date.getHours()) + ':' + formatDigits(date.getMinutes()) + ':' + formatDigits(date.getSeconds());
-            
+Date.prototype.updateSeconds = function(){
+      this.setSeconds(this.getSeconds(+1));  
+};
+
+Date.prototype.autoClock = function(isAuto){
+        clearInterval(this.clockInterval);
+	if(isAuto){
+		var that= this;
+		this.clockInterval = setInterval(function(){
+                        that.updateSeconds();
+                        },1000);
+		//Date.addToInterval(this);
+	}
 }
 
-function formatDigits(val){
-        if(val<10){
-                val = "0" + val;
+function Clock(id,offset,label){
+		offset = offset || 0;
+		label = label || '';
+		var d = new Date();
+		var offset = (offset+ d.getTimezoneOffset())*60*1000;
+		this.d = new Date(offset+d.getTime());
+                this.d.autoClock(true);
+		this.id = id;
+		this.label= label;
+                
+                var that = this;
+                setInterval(function(){
+                        that.updateClock();},1000);
+                this.updateClock();
         }
-        return val;
-}
+
+	Clock.prototype.updateClock = function() {
+		//var date = new Date();
+		//date = new Date((this.offset+ d.getTimezoneOffset())*60*1000 + date.getTime());
+                var date = this.d;
+                //date.updateSeconds();
+		var clock = document.getElementById(this.id);
+		clock.innerHTML = this.formatDigits(date.getHours()) + ':' + this.formatDigits(date.getMinutes()) + ':' + this.formatDigits(date.getSeconds()) +" "+ this.label;
+
+	};
+
+	Clock.prototype.formatDigits = function(val) {
+		if (val < 10) val = "0" + val;
+
+		return val;
+	};
 
 window.onload = onReady();
