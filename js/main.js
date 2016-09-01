@@ -89,7 +89,7 @@ com.tnt.Clock.prototype.formatDigits= function(val){
 com.tnt.TextClock = function(id,offset,label){
 	com.tnt.Clock.apply(this,arguments);
 	console.log(this.version);
-};
+}
 com.tnt.TextClock.prototype = createObject(com.tnt.Clock.prototype,com.tnt.TextClock);
 //com.tnt.TextClock.prototype.constructor = com.tnt.TextClock;
 //com.tnt.TextClock.prototype.version = '1.01';
